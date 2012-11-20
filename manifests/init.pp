@@ -50,7 +50,8 @@ class {'aws::beanstalktools':}
 
 # set up mysql with an empty database
 class { 'mysql::server': 
-  config_hash => { 'root_password' => 'foo' }
+  config_hash => { 'root_password' => 'foo' },
+  require => Exec['apt-get update'],
 }
 
 # create djdb and add user with access
@@ -59,5 +60,6 @@ mysql::db { 'djdb':
   password => 'djpass',
   host     => 'localhost',
   grant    => ['all'],
+  require => Exec['apt-get update'],
 }
 
