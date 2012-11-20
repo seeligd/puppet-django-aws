@@ -1,9 +1,10 @@
-# update package lists
+# update package lists (ubuntu)
 exec { "apt-get update":
 	 command => "/usr/bin/apt-get update",
 }
 
-# initial packages to install
+# initial packages to install; everything to get python built and running, git and some other utilities
+# add anything here that you want that's not included in the default distro
 $aptpackages = [ 
 	 "build-essential", 
 	 "python",
@@ -12,18 +13,17 @@ $aptpackages = [
 	 "python-pip", 
 	 "python-software-properties",
 	 "libmysqlclient-dev",
-	 "unzip",
 	 "screen",
 	 "git",
 	 "vim", 
-	 "wget",
 	 ]
 
 # make sure apt-get update is run before installing packages
 package { $aptpackages: ensure => "installed", require => Exec['apt-get update'] }
 
-# install the following packages with pip
-$pippackages = [ "django", 
+# install the following packages with pip (python's installer)
+$pippackages = [ 
+	 "django", 
 	 "south", 
 	 "mysql-python==1.2.3",
 	 "virtualenv",
@@ -31,7 +31,7 @@ $pippackages = [ "django",
 
 package { $pippackages: ensure => "installed", provider => pip, require => Package["python-setuptools","python-pip","python-dev","build-essential"]}
 
-# install python 2.6 (basically just to guarantee that aws will work)
+# install python 2.6, which is was the AWS environment uses
 exec { "install python2.6":
     command => "/usr/bin/add-apt-repository -y ppa:fkrull/deadsnakes; /usr/bin/apt-get update",
     require => Package["python-software-properties"],
@@ -46,3 +46,18 @@ package {
 }
 
 # get the amazon tools
+class {'aws::beanstalktools':}
+
+# set up mysql with an empty database
+class { 'mysql::server': 
+  config_hash => { 'root_password' => 'foo' }
+}
+
+# create djdb and add user with access
+mysql::db { 'djdb':
+  user     => 'djuser',
+  password => 'djpass',
+  host     => 'localhost',
+  grant    => ['all'],
+}
+
