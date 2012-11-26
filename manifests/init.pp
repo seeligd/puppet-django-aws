@@ -83,3 +83,5 @@ mysql::db { 'djdb':
   require => Exec['apt-get update'],
 }
 
+# set up aliases (run python sever, etc)
+class{ aliases: }
