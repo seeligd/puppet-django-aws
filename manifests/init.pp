@@ -16,6 +16,11 @@ $aptpackages = [
 	 "screen",
 	 "git",
 	 "vim", 
+	 "libjpeg-dev",
+	 "libjpeg8",
+	 "zlib1g-dev",
+	 "libfreetype6-dev",
+	 "libfreetype6",
 	 ]
 
 # make sure apt-get update is run before installing packages
@@ -43,6 +48,21 @@ package {
     $python26packages:
     ensure => "installed",
 	 require => Exec['install python2.6'],
+}
+
+# link up libraries so pip can find them (to install pil; http://jj.isgeek.net/2011/09/install-pil-with-jpeg-support-on-ubuntu-oneiric-64bits/ )
+$uname = "i386-linux-gnu"
+file { '/usr/lib/libfreetype.so': 
+	 ensure => 'link',
+	 target => "/usr/lib/${uname}/libfreetype.so"
+}
+file { '/usr/lib/libjpeg.so': 
+	 ensure => 'link',
+	 target => "/usr/lib/${uname}/libjpeg.so"
+}
+file { '/usr/lib/libz.so': 
+	 ensure => 'link',
+	 target => "/usr/lib/${uname}/libz.so"
 }
 
 # get the amazon tools
