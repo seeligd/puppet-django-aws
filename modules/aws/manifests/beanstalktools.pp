@@ -25,9 +25,9 @@ class aws::beanstalktools($url='https://s3.amazonaws.com/elasticbeanstalk/cli',
 	 }
 
 	 # link the file
-	 file { '/usr/local/bin/eb': 
-		  ensure => 'link',
-		  target => "${installdir}/${package_name}/${binpath}"
-	 }
+	# file { '/usr/local/bin/eb': 
+	#	  ensure => 'link',
+	#	  target => "${installdir}/${package_name}/${binpath}"
+	# }
 
 }
